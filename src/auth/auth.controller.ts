@@ -20,4 +20,4 @@ export class AuthController {
       code, // Вернуть или логировать
     };
   }
-}
+}  
