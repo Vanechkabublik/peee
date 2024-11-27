@@ -12,34 +12,36 @@ export class VkontakteStrategy extends PassportStrategy(VkStrategy, 'vkontakte')
     private jwtService: JwtService,
   ) {
     super({
-      clientID: configService.get<string>('VK_CLIENT_ID'),
-      clientSecret: configService.get<string>('VK_CLIENT_SECRET'),
-      callbackURL: configService.get<string>('VK_CALLBACK_URL'),
-      scope: ['email'], // Права доступа
-      display: 'page',
+      clientID: configService.get<string>('VK_CLIENT_ID'), // ID приложения ВКонтакте
+      clientSecret: configService.get<string>('VK_CLIENT_SECRET'), // Секретный ключ приложения
+      callbackURL: configService.get<string>('VK_CALLBACK_URL'), // URL обратного вызова
+      scope: ['email'], // Запрашиваемые права
+      display: 'page', // Отображение страницы авторизации
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    // Профиль пользователя с ВКонтакте
+  async validate(accessToken: string, refreshToken: string, profile: Profile, done: Function, req: any) {
+    const code = req.query.code;
+    console.log('Authorization Code:', code);
+  
     const user = {
       id: profile.id,
       name: profile.displayName,
-      email: profile.emails?.[0].value,
+      email: profile.emails?.[0]?.value || null,
       accessToken,
     };
-
-    // Генерация JWT токена
+  
     const jwtToken = this.jwtService.sign({
       sub: user.id,
       name: user.name,
       email: user.email,
     });
-
-    // Возвращаем данные пользователя и токен
-    return {
+  
+    return done(null, {
       user,
       token: jwtToken,
-    };
+      code, // Возвращаем code, если нужно
+    });
   }
+  
 }

@@ -9,10 +9,10 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     PassportModule.register({ defaultStrategy: 'vkontakte' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'ildafg76766&^548', // Ваш секрет для JWT
-      signOptions: { expiresIn: '60m' },
+      secret: process.env.JWT_SECRET || 'super_secret_key',
+      signOptions: { expiresIn: '60m' }, // Срок действия токена
     }),
-    ConfigModule.forRoot(), // Подключаем конфиг для получения VK_CLIENT_ID и т.д.
+    ConfigModule.forRoot(), // Подключение .env файла
   ],
   controllers: [AuthController],
   providers: [VkontakteStrategy],
